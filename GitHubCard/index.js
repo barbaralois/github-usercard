@@ -3,28 +3,30 @@
     (replacing the placeholder with your Github name):
     https://api.github.com/users/<your name>
 */
-// axios
-//   .get(`https://api.github.com/users/barbaralois`)
-//   .then((response) => {
-//     let user = {
-//       image: response.data.avatar_url,
-//       name: response.data.name,
-//       username: response.data.login,
-//       location: response.data.location,
-//       githubLink: response.data.html_url,
-//       followers: response.data.followers,
-//       following: response.data.following,
-//       bio: response.data.bio,
-//     };
-//     createCard(user);
-//     entryPoint.appendChild(createCard(user));
-//   })
-//   .catch((error) => {
-//     console.log(error);
-//   })
-//   .finally(() => {
-//     console.log('request is done');
-//   });
+function singleUserInfo(username) {
+  axios
+    .get(`https://api.github.com/users/${username}`)
+    .then((response) => {
+      let user = {
+        image: response.data.avatar_url,
+        name: response.data.name,
+        username: response.data.login,
+        location: response.data.location,
+        githubLink: response.data.html_url,
+        followers: response.data.followers,
+        following: response.data.following,
+        bio: response.data.bio,
+      };
+      createCard(user);
+      entryPoint.appendChild(createCard(user));
+    })
+    .catch((error) => {
+      console.log(error);
+    })
+    .finally(() => {
+      console.log('request is done');
+    });
+}
 
 /*
   STEP 2: Inspect and study the data coming back, this is YOUR
@@ -142,7 +144,7 @@ function createCard(githubData) {
     bigknell
 */
 
-function createGithubCards(usernames) {
+function followerUserInfo(usernames) {
   usernames.forEach((person) => {
     axios
       .get(`https://api.github.com/users/${person}`)
@@ -162,11 +164,28 @@ function createGithubCards(usernames) {
       })
       .catch((error) => {
         console.log(error);
-      })
-      .finally(() => {
-        console.log('request is done');
       });
   });
 }
 
-createGithubCards(followersArray);
+//followerUserInfo(followersArray);
+
+// STRETCH - GET FOLLOWERS LIST
+function getFollowers(username) {
+  axios
+    .get(`https://api.github.com/users/${username}/followers`)
+    .then((response) => {
+      let array = response.data;
+      let followersList = [];
+      array.forEach((follower) => {
+        followersList.push(follower.login);
+      });
+      followerUserInfo(followersList);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
+
+singleUserInfo('barbaralois');
+getFollowers('barbaralois');
