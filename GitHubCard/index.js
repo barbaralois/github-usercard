@@ -3,6 +3,28 @@
     (replacing the placeholder with your Github name):
     https://api.github.com/users/<your name>
 */
+// axios
+//   .get(`https://api.github.com/users/barbaralois`)
+//   .then((response) => {
+//     let user = {
+//       image: response.data.avatar_url,
+//       name: response.data.name,
+//       username: response.data.login,
+//       location: response.data.location,
+//       githubLink: response.data.html_url,
+//       followers: response.data.followers,
+//       following: response.data.following,
+//       bio: response.data.bio,
+//     };
+//     createCard(user);
+//     entryPoint.appendChild(createCard(user));
+//   })
+//   .catch((error) => {
+//     console.log(error);
+//   })
+//   .finally(() => {
+//     console.log('request is done');
+//   });
 
 /*
   STEP 2: Inspect and study the data coming back, this is YOUR
@@ -17,6 +39,8 @@
     and append the returned markup to the DOM as a child of .cards
 */
 
+const entryPoint = document.querySelector('.cards');
+
 /*
   STEP 5: Now that you have your own card getting added to the DOM, either
     follow this link in your browser https://api.github.com/users/<Your github name>/followers,
@@ -28,7 +52,13 @@
     user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const followersArray = [
+  'tetondan',
+  'dustinmyers',
+  'justsml',
+  'luishrd',
+  'bigknell',
+];
 
 /*
   STEP 3: Create a function that accepts a single object as its only argument.
@@ -50,6 +80,59 @@ const followersArray = [];
     </div>
 */
 
+function createCard(githubData) {
+  let {
+    image,
+    name,
+    username,
+    location,
+    githubLink,
+    followers,
+    following,
+    bio,
+  } = githubData;
+
+  const card = document.createElement('div');
+  const userImg = document.createElement('img');
+  const cardInfo = document.createElement('div');
+  const nameElement = document.createElement('h3');
+  const usernameElement = document.createElement('p');
+  const locationElement = document.createElement('p');
+  const profile = document.createElement('p');
+  const profileURL = document.createElement('a');
+  const followersElement = document.createElement('p');
+  const followingElement = document.createElement('p');
+  const bioElement = document.createElement('p');
+
+  card.appendChild(userImg);
+  card.appendChild(cardInfo);
+  cardInfo.appendChild(nameElement);
+  cardInfo.appendChild(usernameElement);
+  cardInfo.appendChild(locationElement);
+  cardInfo.appendChild(profile);
+  profile.appendChild(profileURL);
+  cardInfo.appendChild(followersElement);
+  cardInfo.appendChild(followingElement);
+  cardInfo.appendChild(bioElement);
+
+  card.classList.add('card');
+  userImg.src = image;
+  cardInfo.classList.add('card-info');
+  nameElement.classList.add('name');
+  usernameElement.classList.add('username');
+  profileURL.href = username;
+
+  nameElement.textContent = name;
+  usernameElement.textContent = username;
+  locationElement.textContent = location;
+  profileURL.textContent = githubLink;
+  followersElement.textContent = followers;
+  followingElement.textContent = following;
+  bioElement.textContent = bio;
+
+  return card;
+}
+
 /*
   List of LS Instructors Github username's:
     tetondan
@@ -58,3 +141,32 @@ const followersArray = [];
     luishrd
     bigknell
 */
+
+function createGithubCards(usernames) {
+  usernames.forEach((person) => {
+    axios
+      .get(`https://api.github.com/users/${person}`)
+      .then((response) => {
+        let user = {
+          image: response.data.avatar_url,
+          name: response.data.name,
+          username: response.data.login,
+          location: response.data.location,
+          githubLink: response.data.html_url,
+          followers: response.data.followers,
+          following: response.data.following,
+          bio: response.data.bio,
+        };
+        createCard(user);
+        entryPoint.appendChild(createCard(user));
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        console.log('request is done');
+      });
+  });
+}
+
+createGithubCards(followersArray);
